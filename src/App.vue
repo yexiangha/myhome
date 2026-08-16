@@ -136,7 +136,7 @@ onBeforeUnmount(() => {
   transform: scale(1.2);
   transition: transform 0.3s;
   animation: fade-blur-main-in 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-  animation-delay: 0.5s;
+  animation-delay: 0.25s;
   .container {
     width: 100%;
     height: 100vh;

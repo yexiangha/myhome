@@ -55,7 +55,7 @@ const imgLoadComplete = () => {
     () => {
       store.setImgLoadStatus(true);
     },
-    Math.floor(Math.random() * (600 - 300 + 1)) + 300,
+    Math.floor(Math.random() * (250 - 120 + 1)) + 120,
   );
 };
 
@@ -124,7 +124,7 @@ onBeforeUnmount(() => {
       filter 0.3s,
       transform 0.3s;
     animation: fade-blur-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-    animation-delay: 0.45s;
+    animation-delay: 0.25s;
   }
   .gray {
     opacity: 1;
