@@ -76,6 +76,26 @@ const WIND_DIR_CN = {
   W: "西风", WNW: "西北风", NW: "西北风", NNW: "西北风",
 };
 
+// 英文天气现象 -> 中文 (wttr.in 返回值为英文)
+const WX_CN = {
+  Sunny: "晴", Clear: "晴", "Clear Sunny": "晴", "Clear (night)": "晴",
+  "Partly cloudy": "多云", "Partly Cloudy": "多云", Cloudy: "阴", Overcast: "阴",
+  Mist: "薄雾", Fog: "雾", "Freezing fog": "冻雾", "Smoky haze": "霾",
+  "Light drizzle": "毛毛雨", Drizzle: "毛毛雨", "Heavy drizzle": "大毛毛雨",
+  "Light rain": "小雨", "Moderate rain": "中雨", "Heavy rain": "大雨",
+  "Patchy rain possible": "局部有雨", "Moderate rain at times": "中雨", "Heavy rain at times": "大雨",
+  "Torrential rain shower": "大阵雨", "Light rain shower": "阵雨", "Moderate or heavy rain shower": "阵雨",
+  "Light freezing rain": "冻雨", "Heavy freezing rain": "冻雨", "Freezing rain": "冻雨",
+  "Light sleet": "雨夹雪", "Heavy sleet": "雨夹雪",
+  "Light snow": "小雪", "Moderate snow": "中雪", "Heavy snow": "大雪",
+  "Patchy snow possible": "局部有雪", "Light snow showers": "阵雪", "Moderate or heavy snow showers": "阵雪",
+  "Blowing snow": "吹雪", Blizzard: "暴风雪",
+  Hail: "冰雹", "Light showers of ice pellets": "冰粒", "Moderate or heavy showers of ice pellets": "冰粒",
+  "Thundery outbreaks possible": "雷阵雨", "Patchy light rain with thunder": "雷阵雨",
+  "Moderate or heavy rain with thunder": "雷阵雨", "Light rain with thunder": "雷阵雨",
+  "Heavy rain with thunder": "雷阵雨", Thunderstorm: "雷雨", "Patchy light snow with thunder": "雷雪",
+};
+
 // 风速 km/h -> 风力等级
 const windLevel = (kmh) => {
   const v = Number(kmh);
@@ -96,11 +116,12 @@ export const getOtherWeather = async () => {
     const data = await res.json();
     const cc = data.current_condition?.[0] || {};
     const area = data.nearest_area?.[0] || {};
+    const wx = cc.weatherDesc?.[0]?.value || "未知";
     return {
       result: {
         city: { City: area.areaName?.[0]?.value || "未知地区" },
         condition: {
-          day_weather: cc.weatherDesc?.[0]?.value || "未知",
+          day_weather: WX_CN[wx] || wx,
           min_degree: cc.temp_C,
           max_degree: cc.temp_C,
           day_wind_direction: WIND_DIR_CN[cc.winddir16Point] || cc.winddir16Point || "未知",
