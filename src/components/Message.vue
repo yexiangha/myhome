@@ -116,6 +116,21 @@ watch(
           display: none;
         }
       }
+
+      // 长域名时缩小字号，避免被 text-hidden 截断 (siteUrl[0] 长度 >= 6 时启用)
+      &.long {
+        .bg {
+          font-size: 3rem;
+        }
+        .sm {
+          font-size: 1.3rem;
+        }
+        @media (max-width: 768px) {
+          .bg {
+            font-size: 2.75rem;
+          }
+        }
+      }
     }
     @media (max-width: 768px) {
       .logo-img {
