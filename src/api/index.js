@@ -67,9 +67,48 @@ export const getWeather = async (key, city) => {
   return await res.json();
 };
 
-// 获取教书先生天气 API
-// https://api.oioweb.cn/doc/weather/GetWeather
+// 获取天气 (wttr.in 免 Key 备用接口)
+// 原教书先生 api.oioweb.cn 证书已失效，改用 https://wttr.in (IP 定位，无需 Key)
+const WIND_DIR_CN = {
+  N: "北风", NNE: "东北风", NE: "东北风", ENE: "东北风",
+  E: "东风", ESE: "东南风", SE: "东南风", SSE: "东南风",
+  S: "南风", SSW: "西南风", SW: "西南风", WSW: "西南风",
+  W: "西风", WNW: "西北风", NW: "西北风", NNW: "西北风",
+};
+
+// 风速 km/h -> 风力等级
+const windLevel = (kmh) => {
+  const v = Number(kmh);
+  if (Number.isNaN(v)) return "0";
+  const table = [1, 5, 11, 19, 28, 38, 49, 61, 74, 88, 102, 117];
+  let level = 0;
+  for (let i = 0; i < table.length; i++) {
+    if (v >= table[i]) level = i + 1;
+  }
+  return String(level);
+};
+
 export const getOtherWeather = async () => {
-  const res = await fetch("https://api.oioweb.cn/api/weather/GetWeather");
-  return await res.json();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8000);
+  try {
+    const res = await fetch("https://wttr.in/?format=j1", { signal: controller.signal });
+    const data = await res.json();
+    const cc = data.current_condition?.[0] || {};
+    const area = data.nearest_area?.[0] || {};
+    return {
+      result: {
+        city: { City: area.areaName?.[0]?.value || "未知地区" },
+        condition: {
+          day_weather: cc.weatherDesc?.[0]?.value || "未知",
+          min_degree: cc.temp_C,
+          max_degree: cc.temp_C,
+          day_wind_direction: WIND_DIR_CN[cc.winddir16Point] || cc.winddir16Point || "未知",
+          day_wind_power: windLevel(cc.windspeedKmph),
+        },
+      },
+    };
+  } finally {
+    clearTimeout(timer);
+  }
 };
